@@ -1,6 +1,6 @@
 <template>
   <div class="evaluation-panel">
-    <div class="evaluation-options">
+    <div class="evaluation-options" style="display: flex;">
       <label>
         <input type="radio" value="GB3216" v-model="selectedOption" /> GB3216
       </label>
@@ -11,7 +11,7 @@
 
     <div v-if="selectedOption === 'GB3216'" class="evaluation-content">
       <label>选择等级</label>
-      <select v-model="selectedLevel">
+      <select v-model="selectedLevel" class="selectbox">
         <option v-for="level in gb3216Levels" :key="level" :value="level">{{ level }}</option>
       </select>
     </div>
@@ -19,18 +19,18 @@
     <div v-if="selectedOption === '自定义'" class="evaluation-content">
       <div class="input-group">
         <label>下限:
-          <input type="number" v-model="customLowerLimit" />
+          <input class="custom-input"  type="number" v-model="customLowerLimit" />
         </label>
       </div>
       <div class="input-group">
         <label>上限:
-          <input type="number" v-model="customUpperLimit" />
+          <input class="custom-input" type="number" v-model="customUpperLimit" />
         </label>
       </div>
     </div>
 
-    <button @click="checkValue">检查CFD计算值</button>
-    <div v-if="result !== null">{{ result }}</div>
+    <button class="checkValue"  @click="checkValue">检查CFD计算值</button>
+    <div class="result_msg" v-if="result !== null">{{ result }}</div>
   </div>
 </template>
 
@@ -47,7 +47,7 @@ const props = defineProps({
 
 const selectedOption = ref('GB3216')
 const selectedLevel = ref('')
-const gb3216Levels = ['1U', '1B', '2U', '2B', '3B', '3U']
+const gb3216Levels = ['1U', '1E', '1B', '2B', '2U', '3B']
 const customUpperLimit = ref('')
 const customLowerLimit = ref('')
 const result = ref(null)
@@ -76,11 +76,22 @@ function checkValue() {
 }
 
 .evaluation-options {
+  margin-left: 20px;
   margin-bottom: 20px;
 }
 
 .evaluation-content {
+  margin-left: 20px;
   margin-top: 10px;
+}
+
+.selectbox {
+  width: 200px;
+}
+
+.checkValue {
+  margin-left: 20px;
+  margin-top: 50px;
 }
 
 label {
@@ -100,6 +111,10 @@ select, input[type="number"], button {
   font-size: 16px;
 }
 
+.custom-input {
+    width: 130px;
+}
+
 button {
   padding: 10px 20px;
   border: none;
@@ -110,6 +125,10 @@ button {
   transition: background-color 0.3s ease;
 }
 
+.result_msg {
+  margin-top: 20px;
+  margin-left: 20px;
+}
 button:hover {
   background-color: #0056b3;
 }
