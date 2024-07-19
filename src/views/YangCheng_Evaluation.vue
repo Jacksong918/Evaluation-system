@@ -112,7 +112,6 @@
     margin-top: 10px;
     padding: 10px;
     font-size: 16px;
-    width: 200px;
   }
   
   .custom-input {

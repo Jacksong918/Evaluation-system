@@ -1,13 +1,11 @@
 <template>
-  <div class="evaluation-panel">
     <div class="evaluation-details" v-if="tabDetailsComponent !== null">
       <component :is="tabDetailsComponent" class="full-height"></component>
     </div>
-  </div>
 </template>
 
 <script setup>
-import { shallowRef, watch, defineAsyncComponent } from 'vue'
+import { shallowRef, watch, defineAsyncComponent, onMounted } from 'vue'
 import { defineProps } from 'vue'
 
 // Define props
@@ -41,16 +39,9 @@ function checkValue() {
   }
 }
 
-// Watch for tabName changes and load the corresponding component
-watch(() => props.tabName, async (newTabName) => {
-  selectedOption.value = 'GB3216'
-  selectedLevel.value = ''
-  customUpperLimit.value = ''
-  customLowerLimit.value = ''
-  result.value = null
-
-  // Dynamically load the corresponding component based on tabName
-  switch (newTabName) {
+// Function to load component based on tabName
+function loadComponent(tabName) {
+  switch (tabName) {
     case '扬程评价':
       tabDetailsComponent.value = defineAsyncComponent(() => import('./YangCheng_Evaluation.vue'))
       break
@@ -72,6 +63,23 @@ watch(() => props.tabName, async (newTabName) => {
     default:
       tabDetailsComponent.value = defineAsyncComponent(() => import('./YangCheng_Evaluation.vue'))
   }
+}
+
+// Watch for tabName changes and load the corresponding component
+watch(() => props.tabName, (newTabName) => {
+  selectedOption.value = 'GB3216'
+  selectedLevel.value = ''
+  customUpperLimit.value = ''
+  customLowerLimit.value = ''
+  result.value = null
+  loadComponent(newTabName)
+})
+
+// Initial component load
+onMounted(() => {
+  if (props.tabName) {
+    loadComponent(props.tabName)
+  }
 })
 </script>
 
@@ -84,8 +92,6 @@ html, body {
 .evaluation-panel {
   display: flex;
   flex-direction: column;
-  justify-content: left;
-  align-items: left;
   width: 100%;
   height: 100vh;
   padding: 20px;
@@ -94,5 +100,76 @@ html, body {
   overflow-y: auto;
 }
 
+.evaluation-options {
+  display: flex;
+  margin-bottom: 20px;
+}
 
+.evaluation-content {
+  margin-bottom: 20px;
+}
+
+.selectbox {
+  width: 200px;
+}
+
+.checkValue {
+  margin-top: 20px;
+}
+
+label {
+  display: block;
+  margin-bottom: 10px;
+  font-weight: bold;
+}
+
+.input-group {
+  margin-bottom: 10px;
+}
+
+select, input[type="number"], button {
+  display: block;
+  margin-top: 10px;
+  padding: 10px;
+  font-size: 16px;
+}
+
+.custom-input {
+  width: 130px;
+}
+
+button {
+  padding: 10px 20px;
+  border: none;
+  background-color: #007bff;
+  color: white;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.result_msg {
+  margin-top: 20px;
+}
+
+.evaluation-details {
+  display: flex;
+  width: 100%;
+  height: 100%;
+}
+
+.full-height {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start; /* Align items to the start horizontally */
+  justify-content: flex-start; /* Align items to the start vertically */
+  overflow-y: auto;
+  padding: 20px; /* Optional: padding to add space around the content */
+}
+
+button:hover {
+  background-color: #0056b3;
+}
 </style>
