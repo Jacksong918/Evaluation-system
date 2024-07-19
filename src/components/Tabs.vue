@@ -46,6 +46,7 @@ const props = defineProps({
   cursor: pointer;
   transition: background-color 0.3s ease, color 0.3s ease;
   font-size: 16px;
+  color: #000000;
 }
 
 .tab-buttons button.active {
