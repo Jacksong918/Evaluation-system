@@ -35,18 +35,19 @@ const props = defineProps({
 }
 
 .tab-buttons {
+  margin-top: auto;
   display: flex;
   border-bottom: 1px solid #ccc;
 }
 
 .tab-buttons button {
-  padding: 10px 20px;
+  /* padding: 10px 20px; */
   border: none;
   background: none;
   cursor: pointer;
+  color: #000000;
   transition: background-color 0.3s ease, color 0.3s ease;
   font-size: 16px;
-  color: #000000;
 }
 
 .tab-buttons button.active {

@@ -4,6 +4,7 @@
         <label>
           <input type="radio" value="GB3216" v-model="selectedOption" /> GB3216
         </label>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
         <label>
           <input type="radio" value="自定义" v-model="selectedOption" /> 自定义
         </label>
@@ -112,7 +113,7 @@
   }
   
   .custom-input {
-      width: 130px;
+      width: 200px;
   }
   
   button {
