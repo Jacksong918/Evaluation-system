@@ -4,7 +4,6 @@
         <label>
           <input type="radio" value="GB3216" v-model="selectedOption" /> GB3216
         </label>
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
         <label>
           <input type="radio" value="自定义" v-model="selectedOption" /> 自定义
         </label>
@@ -30,7 +29,7 @@
         </div>
       </div>
   
-      <button class="checkValue"  @click="checkValue">检查CFD计算值</button>
+      <button class="checkValue"  @click="checkValue">检查CFD计算值(压力脉动评价)</button>
       <div class="result_msg" v-if="result !== null">{{ result }}</div>
     </div>
   </template>
@@ -84,7 +83,6 @@
   .evaluation-content {
     margin-left: 20px;
     margin-top: 10px;
-    align-items: center;
   }
   
   .selectbox {
@@ -104,7 +102,6 @@
   
   .input-group {
     margin-bottom: 10px;
-    width: 200px;
   }
   
   select, input[type="number"], button {
@@ -112,7 +109,6 @@
     margin-top: 10px;
     padding: 10px;
     font-size: 16px;
-    width: 200px;
   }
   
   .custom-input {

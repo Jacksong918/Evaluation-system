@@ -23,7 +23,7 @@ const createWindow = () => {
         win.loadFile(join(__dirname, '../dist/index.html'))
     }
 }
-
+ 
 // Electron 会在初始化后并准备
 app.whenReady().then(() => {
     createWindow()

@@ -29,7 +29,7 @@
         </div>
       </div>
   
-      <button class="checkValue"  @click="checkValue">检查CFD计算值</button>
+      <button class="checkValue"  @click="checkValue">检查CFD计算值(效率和轴功率评价)</button>
       <div class="result_msg" v-if="result !== null">{{ result }}</div>
     </div>
   </template>

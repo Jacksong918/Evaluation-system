@@ -1,37 +1,5 @@
 <template>
   <div class="evaluation-panel">
-    <!-- <div class="evaluation-options" style="display: flex;">
-      <label>
-        <input type="radio" value="GB3216" v-model="selectedOption" /> GB3216
-      </label>
-      <label>
-        <input type="radio" value="自定义" v-model="selectedOption" /> 自定义
-      </label>
-    </div>
-
-    <div v-if="selectedOption === 'GB3216'" class="evaluation-content">
-      <label>选择等级</label>
-      <select v-model="selectedLevel" class="selectbox">
-        <option v-for="level in gb3216Levels" :key="level" :value="level">{{ level }}</option>
-      </select>
-    </div>
-
-    <div v-if="selectedOption === '自定义'" class="evaluation-content">
-      <div class="input-group">
-        <label>下限:
-          <input class="custom-input" type="number" v-model="customLowerLimit" />
-        </label>
-      </div>
-      <div class="input-group">
-        <label>上限:
-          <input class="custom-input" type="number" v-model="customUpperLimit" />
-        </label>
-      </div>
-    </div>
-
-    <button class="checkValue" @click="checkValue">检查CFD计算值</button>
-    <div class="result_msg" v-if="result !== null">{{ result }}</div> -->
-
     <div class="evaluation-details" v-if="tabDetailsComponent !== null">
       <component :is="tabDetailsComponent" class="full-height"></component>
     </div>
@@ -84,25 +52,25 @@ watch(() => props.tabName, async (newTabName) => {
   // Dynamically load the corresponding component based on tabName
   switch (newTabName) {
     case '扬程评价':
-      tabDetailsComponent.value = defineAsyncComponent(() => import('../components/YangChengEvaluation.vue'))
+      tabDetailsComponent.value = defineAsyncComponent(() => import('./YangCheng_Evaluation.vue'))
       break
     case '效率和轴功率评价':
-      tabDetailsComponent.value = defineAsyncComponent(() => import('../components/EfficiencyAndPowerEvaluation.vue'))
+      tabDetailsComponent.value = defineAsyncComponent(() => import('./XiaoLv_Evaluation.vue'))
       break
     case '压力脉动评价':
-      tabDetailsComponent.value = defineAsyncComponent(() => import('../components/YangChengEvaluation.vue'))
+      tabDetailsComponent.value = defineAsyncComponent(() => import('./YaLi_Evaluation.vue'))
       break
     case '振动评价':
-      tabDetailsComponent.value = defineAsyncComponent(() => import('../components/YangChengEvaluation.vue'))
+      tabDetailsComponent.value = defineAsyncComponent(() => import('./ZhenDong_Evaluation.vue'))
       break
     case '噪声评价':
-      tabDetailsComponent.value = defineAsyncComponent(() => import('../components/YangChengEvaluation.vue'))
+      tabDetailsComponent.value = defineAsyncComponent(() => import('./ZaoSheng_Evaluation.vue'))
       break
     case '综合评价':
-      tabDetailsComponent.value = defineAsyncComponent(() => import('../components/YangChengEvaluation.vue'))
+      tabDetailsComponent.value = defineAsyncComponent(() => import('./ZongHe_Evaluation.vue'))
       break
     default:
-      tabDetailsComponent.value = defineAsyncComponent(() => import('../components/YangChengEvaluation.vue'))
+      tabDetailsComponent.value = defineAsyncComponent(() => import('./YangCheng_Evaluation.vue'))
   }
 })
 </script>
