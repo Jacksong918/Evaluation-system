@@ -13,24 +13,26 @@ function handleItemSelected(items) {
   }
 }
 
-
+function handleTabClick(tab) {
+  selectedTab.value = tab
+}
 </script>
 
 <template>
-
-<div id="app">
+  <div id="app">
     <div class="sidebar-container">
       <Sidebar @item-selected="handleItemSelected" />
     </div>
     <div class="content-container">
       <div class="selected-tags">
-        <span 
+        <button 
           v-for="tab in selectedTabs" 
           :key="tab" 
           class="tag"
+          @click="handleTabClick(tab)"
         >
           {{ tab }}
-        </span>
+        </button>
       </div>
       <div class="evaluation-container">
         <div v-if="selectedTabs.length === 0" class="no-selection">
@@ -40,13 +42,9 @@ function handleItemSelected(items) {
       </div>
     </div>
   </div>
-
-  
 </template>
 
-
 <style>
-
 html, body {
   margin: 0;
   padding: 0;
@@ -60,7 +58,7 @@ html, body {
   width: 100vw;
   font-family: Arial, sans-serif;
   background-color: #f4f4f9;
-  overflow: hidden; /* 确保没有滚动条 */
+  overflow: hidden;
 }
 
 .sidebar-container {
@@ -73,9 +71,8 @@ html, body {
   flex: 1;
   display: flex;
   flex-direction: column;
-  /* padding: 10px; */
   background-color: #ffffff;
-  overflow: auto; /* 确保内容可以滚动 */
+  overflow: auto;
 }
 
 .selected-tags {
@@ -89,9 +86,15 @@ html, body {
   color: white;
   padding: 5px 10px;
   margin: 5px;
+  border: none;
   border-radius: 3px;
   font-size: 14px;
   white-space: nowrap;
+  cursor: pointer;
+}
+
+.tag:hover {
+  background-color: #0056b3;
 }
 
 .evaluation-container {
@@ -107,8 +110,4 @@ html, body {
   color: #666;
   text-align: center;
 }
-
-
 </style>
-
-

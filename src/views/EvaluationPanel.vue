@@ -1,5 +1,5 @@
 <template>
-  <div class="evaluation-panel">
+  <!-- <div class="evaluation-panel">
     <div class="evaluation-options" style="display: flex;">
       <label>
         <input type="radio" value="GB3216" v-model="selectedOption" /> GB3216
@@ -19,7 +19,7 @@
     <div v-if="selectedOption === '自定义'" class="evaluation-content">
       <div class="input-group">
         <label>下限:
-          <input class="custom-input"  type="number" v-model="customLowerLimit" />
+          <input class="custom-input" type="number" v-model="customLowerLimit" />
         </label>
       </div>
       <div class="input-group">
@@ -29,15 +29,20 @@
       </div>
     </div>
 
-    <button class="checkValue"  @click="checkValue">检查CFD计算值</button>
-    <div class="result_msg" v-if="result !== null">{{ result }}</div>
-  </div>
+    <button class="checkValue" @click="checkValue">检查CFD计算值</button>
+    <div class="result_msg" v-if="result !== null">{{ result }}</div> -->
+    
+    <div class="evaluation-details" v-if="tabDetailsComponent !== null">
+      <component :is="tabDetailsComponent"></component>
+    </div>
+  <!-- </div> -->
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { shallowRef, watch, defineAsyncComponent } from 'vue'
 import { defineProps } from 'vue'
 
+// Define props
 const props = defineProps({
   tabName: {
     type: String,
@@ -45,13 +50,16 @@ const props = defineProps({
   }
 })
 
-const selectedOption = ref('GB3216')
-const selectedLevel = ref('')
+// State variables
+const selectedOption = shallowRef('GB3216')
+const selectedLevel = shallowRef('')
 const gb3216Levels = ['1U', '1E', '1B', '2B', '2U', '3B']
-const customUpperLimit = ref('')
-const customLowerLimit = ref('')
-const result = ref(null)
+const customUpperLimit = shallowRef('')
+const customLowerLimit = shallowRef('')
+const result = shallowRef(null)
+const tabDetailsComponent = shallowRef(null)
 
+// Function to check value
 function checkValue() {
   const cfdValue = 50 // 示例值
   if (selectedOption.value === 'GB3216') {
@@ -64,6 +72,39 @@ function checkValue() {
     }
   }
 }
+
+// Watch for tabName changes and load the corresponding component
+watch(() => props.tabName, async (newTabName) => {
+  selectedOption.value = 'GB3216'
+  selectedLevel.value = ''
+  customUpperLimit.value = ''
+  customLowerLimit.value = ''
+  result.value = null
+
+  // Dynamically load the corresponding component based on tabName
+  switch (newTabName) {
+    case '扬程评价':
+      tabDetailsComponent.value = defineAsyncComponent(() => import('../components/YangChengEvaluation.vue'))
+      break
+    case '效率和轴功率评价':
+      tabDetailsComponent.value = defineAsyncComponent(() => import('../components/EfficiencyAndPowerEvaluation.vue'))
+      break
+    case '压力脉动评价':
+      tabDetailsComponent.value = defineAsyncComponent(() => import('../components/YangChengEvaluation.vue'))
+      break
+    case '振动评价':
+      tabDetailsComponent.value = defineAsyncComponent(() => import('../components/YangChengEvaluation.vue'))
+      break
+    case '噪声评价':
+      tabDetailsComponent.value = defineAsyncComponent(() => import('../components/YangChengEvaluation.vue'))
+      break
+    case '综合评价':
+      tabDetailsComponent.value = defineAsyncComponent(() => import('../components/YangChengEvaluation.vue'))
+      break
+    default:
+      tabDetailsComponent.value = defineAsyncComponent(() => import('../components/YangChengEvaluation.vue'))
+  }
+})
 </script>
 
 <style>
@@ -112,7 +153,7 @@ select, input[type="number"], button {
 }
 
 .custom-input {
-    width: 130px;
+  width: 130px;
 }
 
 button {
@@ -129,6 +170,13 @@ button {
   margin-top: 20px;
   margin-left: 20px;
 }
+
+.evaluation-details {
+  margin-top: 20px;
+  margin-left: 20px;
+  font-size: 16px;
+}
+
 button:hover {
   background-color: #0056b3;
 }
