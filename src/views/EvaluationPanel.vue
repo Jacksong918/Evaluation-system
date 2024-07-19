@@ -115,6 +115,7 @@ html, body {
 
 .checkValue {
   margin-top: 20px;
+  width: 300px;
 }
 
 label {
@@ -135,7 +136,7 @@ select, input[type="number"], button {
 }
 
 .custom-input {
-  width: 130px;
+  width: 200px;
 }
 
 button {

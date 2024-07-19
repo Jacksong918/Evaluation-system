@@ -113,7 +113,7 @@
   }
   
   .custom-input {
-      width: 130px;
+      width: 200px;
   }
   
   button {
