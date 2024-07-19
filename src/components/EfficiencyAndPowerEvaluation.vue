@@ -10,7 +10,7 @@
       </div>
   
       <div v-if="selectedOption === 'GB3216'" class="evaluation-content">
-        <label>选择等级 效率</label>
+        <label>选择等级</label>
         <select v-model="selectedLevel" class="selectbox">
           <option v-for="level in gb3216Levels" :key="level" :value="level">{{ level }}</option>
         </select>
@@ -19,7 +19,7 @@
       <div v-if="selectedOption === '自定义'" class="evaluation-content">
         <div class="input-group">
           <label>下限:
-            <input class="custom-input" type="number" v-model="customLowerLimit" />
+            <input class="custom-input"  type="number" v-model="customLowerLimit" />
           </label>
         </div>
         <div class="input-group">
@@ -29,17 +29,13 @@
         </div>
       </div>
   
-      <button class="checkValue" @click="checkValue">检查CFD计算值</button>
+      <button class="checkValue"  @click="checkValue">检查CFD计算值</button>
       <div class="result_msg" v-if="result !== null">{{ result }}</div>
-      
-      <div class="evaluation-details" v-if="tabDetails !== ''">
-        <p>{{ tabDetails }}</p>
-      </div>
     </div>
   </template>
   
   <script setup>
-  import { ref, watch } from 'vue'
+  import { ref } from 'vue'
   import { defineProps } from 'vue'
   
   const props = defineProps({
@@ -55,40 +51,6 @@
   const customUpperLimit = ref('')
   const customLowerLimit = ref('')
   const result = ref(null)
-  const tabDetails = ref('')
-  
-  // Watch tabName changes and reset states
-  watch(() => props.tabName, (newTabName) => {
-    selectedOption.value = 'GB3216'
-    selectedLevel.value = ''
-    customUpperLimit.value = ''
-    customLowerLimit.value = ''
-    result.value = null
-    
-    // Set tabDetails based on tabName
-    switch (newTabName) {
-      case '扬程评价':
-        tabDetails.value = '这是扬程评价的详细信息。'
-        break
-      case '效率和轴功率评价':
-        tabDetails.value = '这是效率和轴功率评价的详细信息。'
-        break
-      case '压力脉动评价':
-        tabDetails.value = '这是压力脉动评价的详细信息。'
-        break
-      case '振动评价':
-        tabDetails.value = '这是振动评价的详细信息。'
-        break
-      case '噪声评价':
-        tabDetails.value = '这是噪声评价的详细信息。'
-        break
-      case '综合评价':
-        tabDetails.value = '这是综合评价的详细信息。'
-        break
-      default:
-        tabDetails.value = ''
-    }
-  })
   
   function checkValue() {
     const cfdValue = 50 // 示例值
@@ -150,7 +112,7 @@
   }
   
   .custom-input {
-    width: 130px;
+      width: 130px;
   }
   
   button {
@@ -167,15 +129,7 @@
     margin-top: 20px;
     margin-left: 20px;
   }
-  
-  .evaluation-details {
-    margin-top: 20px;
-    margin-left: 20px;
-    font-size: 16px;
-  }
-  
   button:hover {
     background-color: #0056b3;
   }
   </style>
-  

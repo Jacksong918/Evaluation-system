@@ -1,6 +1,6 @@
 <template>
-  <!-- <div class="evaluation-panel">
-    <div class="evaluation-options" style="display: flex;">
+  <div class="evaluation-panel">
+    <!-- <div class="evaluation-options" style="display: flex;">
       <label>
         <input type="radio" value="GB3216" v-model="selectedOption" /> GB3216
       </label>
@@ -31,11 +31,11 @@
 
     <button class="checkValue" @click="checkValue">检查CFD计算值</button>
     <div class="result_msg" v-if="result !== null">{{ result }}</div> -->
-    
+
     <div class="evaluation-details" v-if="tabDetailsComponent !== null">
-      <component :is="tabDetailsComponent"></component>
+      <component :is="tabDetailsComponent" class="full-height"></component>
     </div>
-  <!-- </div> -->
+  </div>
 </template>
 
 <script setup>
@@ -108,76 +108,23 @@ watch(() => props.tabName, async (newTabName) => {
 </script>
 
 <style>
+html, body {
+  height: 100%;
+  margin: 0;
+}
+
 .evaluation-panel {
-  flex: 1;
-  padding: 10px;
-  background-color: #ffffff;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  justify-content: left;
+  align-items: left;
+  width: 100%;
+  height: 100vh;
+  padding: 20px;
+  box-sizing: border-box;
+  background-color: #f4f4f9;
+  overflow-y: auto;
 }
 
-.evaluation-options {
-  margin-left: 20px;
-  margin-bottom: 20px;
-}
 
-.evaluation-content {
-  margin-left: 20px;
-  margin-top: 10px;
-}
-
-.selectbox {
-  width: 200px;
-}
-
-.checkValue {
-  margin-left: 20px;
-  margin-top: 50px;
-}
-
-label {
-  display: block;
-  margin-bottom: 10px;
-  font-weight: bold;
-}
-
-.input-group {
-  margin-bottom: 10px;
-}
-
-select, input[type="number"], button {
-  display: block;
-  margin-top: 10px;
-  padding: 10px;
-  font-size: 16px;
-}
-
-.custom-input {
-  width: 130px;
-}
-
-button {
-  padding: 10px 20px;
-  border: none;
-  background-color: #007bff;
-  color: white;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-}
-
-.result_msg {
-  margin-top: 20px;
-  margin-left: 20px;
-}
-
-.evaluation-details {
-  margin-top: 20px;
-  margin-left: 20px;
-  font-size: 16px;
-}
-
-button:hover {
-  background-color: #0056b3;
-}
 </style>
