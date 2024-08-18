@@ -1,26 +1,41 @@
 "use strict";
-const { app, BrowserWindow } = require("electron");
-const { join } = require("path");
+const { app, BrowserWindow, ipcMain } = require("electron");
+require("path");
+const fs = require("fs");
 process.env["ELECTRON_DISABLE_SECURITY_WARNINGS"] = "true";
+let mainWindow;
 const createWindow = () => {
-  const win = new BrowserWindow({
+  mainWindow = new BrowserWindow({
     width: 800,
-    height: 600
+    height: 600,
+    webPreferences: {
+      nodeIntegration: true,
+      contextIsolation: false
+    }
   });
-  win.loadURL("http://localhost:3000");
-  if (process.env.VITE_DEV_SERVER_URL) {
-    win.loadURL(process.env.VITE_DEV_SERVER_URL);
-    win.webContents.openDevTools();
-  } else {
-    win.loadFile(join(__dirname, "../dist/index.html"));
-  }
+  mainWindow.loadURL("http://localhost:3000");
+  mainWindow.webContents.openDevTools();
+  mainWindow.on("closed", function() {
+    mainWindow = null;
+  });
 };
 app.whenReady().then(() => {
-  createWindow();
+  if (!process.env.DISABLE_AUTO_LAUNCH) {
+    createWindow();
+  }
   app.on("activate", () => {
     if (BrowserWindow.getAllWindows().length === 0) createWindow();
   });
 });
 app.on("window-all-closed", () => {
   if (process.platform !== "darwin") app.quit();
+});
+ipcMain.handle("read-file", async (event, filePath) => {
+  try {
+    const data = fs.readFileSync(filePath, "utf8");
+    return data;
+  } catch (err) {
+    console.error("Error reading file:", err);
+    throw err;
+  }
 });

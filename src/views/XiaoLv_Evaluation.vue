@@ -1,136 +1,191 @@
 <template>
-    <div class="evaluation-panel">
-      <div class="evaluation-options" style="display: flex;">
-        <label>
-          <input type="radio" value="GB3216" v-model="selectedOption" /> GB3216
-        </label>
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-        <label>
-          <input type="radio" value="自定义" v-model="selectedOption" /> 自定义
-        </label>
-      </div>
-  
-      <div v-if="selectedOption === 'GB3216'" class="evaluation-content">
-        <label>选择等级</label>
-        <select v-model="selectedLevel" class="selectbox">
-          <option v-for="level in gb3216Levels" :key="level" :value="level">{{ level }}</option>
-        </select>
-      </div>
-  
-      <div v-if="selectedOption === '自定义'" class="evaluation-content">
-        <div class="input-group">
-          <label>下限:
-            <input class="custom-input"  type="number" v-model="customLowerLimit" />
-          </label>
-        </div>
-        <div class="input-group">
-          <label>上限:
-            <input class="custom-input" type="number" v-model="customUpperLimit" />
-          </label>
-        </div>
-      </div>
-  
-      <button class="checkValue"  @click="checkValue">检查CFD计算值(效率和轴功率评价)</button>
-      <div class="result_msg" v-if="result !== null">{{ result }}</div>
+  <div class="evaluation-panel">
+    <div class="evaluation-options">
+      <p>评价规则选择：</p>
+      <label>
+        <input type="radio" value="GB3216" v-model="selectedOption" /> GB3216
+      </label>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      <label>
+        <input type="radio" value="自定义" v-model="selectedOption" /> 自定义
+      </label>
     </div>
-  </template>
-  
-  <script setup>
-  import { ref } from 'vue'
-  import { defineProps } from 'vue'
-  
-  const props = defineProps({
-    tabName: {
-      type: String,
-      required: true
-    }
-  })
-  
-  const selectedOption = ref('GB3216')
-  const selectedLevel = ref('')
-  const gb3216Levels = ['1U', '1E', '1B', '2B', '2U', '3B']
-  const customUpperLimit = ref('')
-  const customLowerLimit = ref('')
-  const result = ref(null)
-  
-  function checkValue() {
-    const cfdValue = 50 // 示例值
-    if (selectedOption.value === 'GB3216') {
-      result.value = `${cfdValue} 是在 GB3216 标准的范围内`
-    } else if (selectedOption.value === '自定义') {
-      if (cfdValue >= customLowerLimit.value && cfdValue <= customUpperLimit.value) {
-        result.value = `${cfdValue} 是在自定义范围内`
-      } else {
-        result.value = `${cfdValue} 不在自定义范围内`
+
+    <div v-if="selectedOption === 'GB3216'" class="evaluation-content">
+      <label>选择等级</label>
+      <select v-model="selectedLevel" class="selectbox">
+        <option v-for="level in gb3216Levels" :key="level" :value="level">{{ level }}</option>
+      </select>
+    </div>
+
+    <div v-if="selectedOption === '自定义'" class="evaluation-content">
+      <div class="input-group">
+        <label>下限 (效率):
+          <input class="custom-input" type="number" v-model="customEfficiencyLowerLimit" />
+        </label>
+      </div>
+      <div class="input-group">
+        <label>上限 (效率):
+          <input class="custom-input" type="number" v-model="customEfficiencyUpperLimit" />
+        </label>
+      </div>
+      <div class="input-group">
+        <label>下限 (轴功率):
+          <input class="custom-input" type="number" v-model="customPowerLowerLimit" />
+        </label>
+      </div>
+      <div class="input-group">
+        <label>上限 (轴功率):
+          <input class="custom-input" type="number" v-model="customPowerUpperLimit" />
+        </label>
+      </div>
+    </div>
+
+    <button class="checkValue" @click="checkValue">检查CFD计算值(效率和轴功率评价)</button>
+    <div class="result_msg" v-if="result !== null">{{ result }}</div>
+  </div>
+</template>
+
+<script setup>
+import { ref, watch, onMounted, defineProps } from 'vue';
+const { ipcRenderer } = require('electron'); // 确保在 Electron 环境中运行
+
+// 定义props
+const props = defineProps({
+  tabName: {
+    type: String,
+    required: true
+  },
+  filePath: {
+    type: String,
+    required: false
+  }
+});
+
+// 定义状态变量
+const selectedOption = ref('GB3216');
+const selectedLevel = ref('');
+const gb3216Levels = ['1U', '1E', '1B', '2B', '2U', '3B'];
+const customEfficiencyUpperLimit = ref('');
+const customEfficiencyLowerLimit = ref('');
+const customPowerUpperLimit = ref('');
+const customPowerLowerLimit = ref('');
+const result = ref(null);
+const fileContent = ref(null); // 确保 fileContent 初始值为 null
+
+// 新增的状态变量
+const efficiency = ref('');
+const power = ref('');
+
+// 定义 output 的状态变量
+const outputEfficiency = ref('');
+const outputPower = ref('');
+
+// 定义 GB3216 评价规则
+const gb3216Rules = {
+  '1U': { efficiency: 1.00, power: 1.10 },
+  '1E': { efficiency: 1.00, power: 1.04 },
+  '1B': { efficiency: 0.97, power: 1.04 },
+  '2B': { efficiency: 0.95, power: 1.08 },
+  '2U': { efficiency: 0.95, power: 1.16 },
+  '3B': { efficiency: 0.93, power: 1.09 },
+};
+
+// 打印 filePath 到控制台并读取文件内容
+watch(() => props.filePath, (newFilePath) => {
+  console.log('Received file path:', newFilePath);
+  readFile(newFilePath);
+});
+
+// 读取文件并更新 CFD 值和新增的状态变量
+const readFile = async (filePath) => {
+  if (filePath) {
+    console.log('filepath:', filePath);
+    try {
+      const data = await ipcRenderer.invoke('read-file', filePath);
+      const fileData = JSON.parse(data);
+      console.log('output:', fileData); // 确保控制台输出解析后的 JSON 数据
+      if (fileData.Input) {
+        efficiency.value = fileData.Input.Efficiency;
+        power.value = fileData.Input.ShaftPower;
       }
+      if (fileData.Output) {
+        outputEfficiency.value = fileData.Output.Efficiency;
+        outputPower.value = fileData.Output.ShaftPower;
+      }
+      fileContent.value = fileData; // 更新为解析后的对象
+    } catch (err) {
+      console.error('Error reading file:', err);
     }
   }
-  </script>
-  
-  <style>
-  .evaluation-panel {
-    flex: 1;
-    padding: 10px;
-    background-color: #ffffff;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+};
+
+onMounted(() => {
+  if (props.filePath) {
+    readFile(props.filePath);
   }
-  
-  .evaluation-options {
-    margin-left: 20px;
-    margin-bottom: 20px;
+});
+
+function checkValue() {
+  const newEfficiency = parseFloat(outputEfficiency.value);
+  const newPower = parseFloat(outputPower.value);
+  if (selectedOption.value === 'GB3216') {
+    const rule = gb3216Rules[selectedLevel.value];
+    if (rule) {
+      const efficiency0 = efficiency.value; // 文件中读取的效率 η0
+      const powerP0 = power.value; // 文件中读取的轴功率 P0
+
+      const efficiencyCheck = newEfficiency >= efficiency0 * rule.efficiency;
+      const powerCheck = newPower < powerP0 * rule.power;
+
+      if (efficiencyCheck && powerCheck) {
+        result.value = '满足GB3216标准';
+      } else {
+        result.value = '不满足GB3216标准';
+        if (!efficiencyCheck) {
+          result.value += `\n效率 η=${newEfficiency} 不满足条件: ${newEfficiency} < ${efficiency0 * rule.efficiency}`;
+        }
+        if (!powerCheck) {
+          result.value += `\n轴功率 P=${newPower} 不满足条件: ${newPower} >= ${powerP0 * rule.power}`;
+        }
+      }
+    } else {
+      result.value = '未选择规则';
+    }
+  } else if (selectedOption.value === '自定义') {
+    if (customEfficiencyLowerLimit.value === '' && customEfficiencyUpperLimit.value === '' && customPowerLowerLimit.value === '' && customPowerUpperLimit.value === '') {
+      result.value = '效率和轴功率的上下限都没有输入';
+      return;
+    }
+    if (customEfficiencyLowerLimit.value === '') {
+      result.value = '效率的下限没有输入';
+      return;
+    }
+    if (customEfficiencyUpperLimit.value === '') {
+      result.value = '效率的上限没有输入';
+      return;
+    }
+    if (customPowerLowerLimit.value === '') {
+      result.value = '轴功率的下限没有输入';
+      return;
+    }
+    if (customPowerUpperLimit.value === '') {
+      result.value = '轴功率的上限没有输入';
+      return;
+    }
+    if (parseFloat(customEfficiencyLowerLimit.value) >= parseFloat(customEfficiencyUpperLimit.value)) {
+      result.value = '效率的下限必须小于上限';
+      return;
+    }
+    if (parseFloat(customPowerLowerLimit.value) >= parseFloat(customPowerUpperLimit.value)) {
+      result.value = '轴功率的下限必须小于上限';
+      return;
+    }
+    if (newEfficiency >= customEfficiencyLowerLimit.value && newEfficiency <= customEfficiencyUpperLimit.value && newPower >= customPowerLowerLimit.value && newPower <= customPowerUpperLimit.value) {
+      result.value = `在自定义范围内`;
+    } else {
+      result.value = `不在自定义范围内`;
+    }
   }
-  
-  .evaluation-content {
-    margin-left: 20px;
-    margin-top: 10px;
-  }
-  
-  .selectbox {
-    width: 200px;
-  }
-  
-  .checkValue {
-    margin-left: 20px;
-    margin-top: 50px;
-  }
-  
-  label {
-    display: block;
-    margin-bottom: 10px;
-    font-weight: bold;
-  }
-  
-  .input-group {
-    margin-bottom: 10px;
-  }
-  
-  select, input[type="number"], button {
-    display: block;
-    margin-top: 10px;
-    padding: 10px;
-    font-size: 16px;
-  }
-  
-  .custom-input {
-      width: 200px;
-  }
-  
-  button {
-    padding: 10px 20px;
-    border: none;
-    background-color: #007bff;
-    color: white;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-  }
-  
-  .result_msg {
-    margin-top: 20px;
-    margin-left: 20px;
-  }
-  button:hover {
-    background-color: #0056b3;
-  }
-  </style>
+}
+</script>

@@ -1,6 +1,7 @@
 <template>
     <div class="evaluation-panel">
-      <div class="evaluation-options" style="display: flex;">
+      <div class="evaluation-options">
+        <p>评价规则选择：</p>
         <label>
           <input type="radio" value="GB3216" v-model="selectedOption" /> GB3216
         </label>
@@ -77,12 +78,11 @@
   }
   
   .evaluation-options {
-    margin-left: 20px;
-    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
   }
   
   .evaluation-content {
-    margin-left: 20px;
     margin-top: 10px;
   }
   
@@ -95,10 +95,10 @@
     margin-top: 50px;
   }
   
-  label {
+  .label {
     display: block;
-    margin-bottom: 10px;
-    font-weight: bold;
+    /* font-weight: bold; */
+    align-items: center;
   }
   
   .input-group {
@@ -107,7 +107,6 @@
   
   select, input[type="number"], button {
     display: block;
-    margin-top: 10px;
     padding: 10px;
     font-size: 16px;
   }

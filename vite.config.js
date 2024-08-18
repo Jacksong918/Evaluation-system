@@ -11,9 +11,15 @@ export default defineConfig({
         entry: 'main.js'
     }),
   ],
+  build: {
+    rollupOptions: {
+      external: ['electron'],
+    }
+  },
   /*开发服务器选项*/
   server: {
     // 端口
     port: 3000,
+    open: false // 禁用自动打开浏览器
   }
 })
