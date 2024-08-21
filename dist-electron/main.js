@@ -27,7 +27,7 @@ const createWindow = () => {
     console.error("Invalid or missing second file path.");
     filePath2 = null;
   }
-  mainWindow.loadFile("./dist/index.html");
+  mainWindow.loadURL("http://localhost:3000");
   mainWindow.webContents.openDevTools();
   mainWindow.webContents.once("did-finish-load", () => {
     mainWindow.webContents.send("file-paths", { filePath1, filePath2 });

@@ -39,7 +39,7 @@ const createWindow = () => {
 
     // 加载本地 Vue 项目
     // mainWindow.loadURL('http://localhost:3000');  // 确保这个URL是你的Vue项目的本地开发地址
-    mainWindow.loadFile("./dist/index.html")  // 确保这个URL是你的Vue项目的本地开发地址
+    mainWindow.loadFile("./dist/index.html")  // 打包用
 
     // 打开开发者工具
     mainWindow.webContents.openDevTools();

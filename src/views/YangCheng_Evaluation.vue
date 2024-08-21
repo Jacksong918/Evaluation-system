@@ -52,13 +52,8 @@ const { ipcRenderer } = require('electron'); // 确保在 Electron 环境中运�
 
 // 定义props
 const props = defineProps({
-  tabName: {
-    type: String,
-    required: true
-  },
   filePath1: {
-    type: String,
-    required: false
+    type: String
   }
 });
 
