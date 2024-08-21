@@ -18,19 +18,38 @@ const createWindow = () => {
         },
     });
 
+    // 获取命令行第一个参数作为文件路径
+    let filePath1 = process.argv[1];
+    let filePath2 = process.argv[2]; 
+
+    if (filePath1 && fs.existsSync(filePath1)) {
+        console.log('Valid first file path.', filePath1);
+    } else {
+        console.error('Invalid or missing first file path.');
+        filePath1 = null; // 设置为 null 以避免尝试加载不存在的文件
+    }
+    // 验证文件路径1
+    if (filePath2 && fs.existsSync(filePath2)) {
+        console.log('Valid second file path:', filePath2);
+    } else {
+        console.error('Invalid or missing second file path.');
+        filePath2 = null; // 设置为 null 以避免尝试加载不存在的文件
+    }
+
+
     // 加载本地 Vue 项目
-    mainWindow.loadURL('http://localhost:3000');  // 确保这个URL是你的Vue项目的本地开发地址
+    // mainWindow.loadURL('http://localhost:3000');  // 确保这个URL是你的Vue项目的本地开发地址
+    mainWindow.loadFile("./dist/index.html")  // 确保这个URL是你的Vue项目的本地开发地址
 
     // 打开开发者工具
     mainWindow.webContents.openDevTools();
 
-    // 发送命令行参数到渲染进程
-    // console.log('Received file path:', filepath);
-
-    // mainWindow.webContents.on('did-finish-load', () => {
-    //     mainWindow.webContents.send('file-path', filepath);
-    // });
-
+    // 确保页面已加载完成，然后发送文件路径
+    mainWindow.webContents.once('did-finish-load', () => {
+        // 发送两个文件路径给渲染进程
+        mainWindow.webContents.send('file-paths', { filePath1, filePath2 });
+        console.log('File paths sent to renderer:', filePath1, filePath2);
+    });
 
     mainWindow.on('closed', function () {
         mainWindow = null

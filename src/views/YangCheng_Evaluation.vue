@@ -21,26 +21,28 @@
     <div v-if="selectedOption === '自定义'" class="evaluation-content">
       <div class="input-group-horizontal">
         <label>
-          下限(扬程):
+          下限(扬程)：
           <input class="custom-input" type="number" v-model="customLowerLimit" />
         </label>
         <label>
-          上限(扬程):
+          上限(扬程)：
           <input class="custom-input" type="number" v-model="customUpperLimit" />
         </label>
       </div>
     </div>
 
-    <button class="checkValue" @click="checkValue">检查CFD计算值(扬程评价)</button>
+    <button class="checkValue" @click="checkValue">扬程评价</button>
+    <div v-if="result" class="result_msg">{{ result }}</div>
 
-    <!-- 弹窗 -->
+    <!-- 弹窗
     <div v-if="showModal" class="modal">
       <div class="modal-content">
         <span class="close" @click="closeModal">&times;</span>
         <p>{{ result }}</p>
         <button class="modal-button" @click="closeModal">确认</button>
       </div>
-    </div>
+    </div> -->
+
   </div>
 </template>
 
@@ -54,7 +56,7 @@ const props = defineProps({
     type: String,
     required: true
   },
-  filePath: {
+  filePath1: {
     type: String,
     required: false
   }
@@ -69,11 +71,7 @@ const customLowerLimit = ref('');
 const result = ref(null);
 const showModal = ref(false);
 const fileContent = ref(null); // 确保 fileContent 初始值为 null
-
-// 新增的状态变量
 const head = ref('');
-
-// 定义 output 的状态变量
 const outputHead = ref('');
 
 // 定义 GB3216 评价规则
@@ -86,10 +84,22 @@ const gb3216Rules = {
   '3B': { head: [0.93, 1.07] },
 };
 
-// 打印 filePath 到控制台并读取文件内容
-watch(() => props.filePath, (newFilePath) => {
-  console.log('Received file path:', newFilePath);
-  readFile(newFilePath);
+// 动态监听 filePath1 的变化并读取文件内容
+watch(() => props.filePath1, (newFilePath1) => {
+  console.log('Received file path:', newFilePath1);
+  readFile(newFilePath1);
+});
+
+// 监听选项、等级、输入框的变化
+watch([() => selectedOption.value, () => selectedLevel.value, 
+() => customLowerLimit.value, () => customUpperLimit.value], () => {
+  result.value = null; // 清空结果
+}, { immediate: false });
+
+onMounted(() => {
+  if (props.filePath1) {
+    readFile(props.filePath1);
+  }
 });
 
 // 读取文件并更新 CFD 值和新增的状态变量
@@ -113,40 +123,34 @@ const readFile = async (filePath) => {
   }
 };
 
-onMounted(() => {
-  if (props.filePath) {
-    readFile(props.filePath);
-  }
-});
-
 function checkValue() {
   const newH = parseFloat(outputHead.value);
   if (selectedOption.value === 'GB3216') {
     const rule = gb3216Rules[selectedLevel.value];
     if (rule) {
-      const headH0 = head.value; // 文件中读取的 H0
+      const headH0 = head.value;
       const headCheck = newH >= headH0 * rule.head[0] && newH < headH0 * rule.head[1];
       if (headCheck) {
-        result.value = '优化扬程满足GB3216标准';
+        result.value = '满足GB3216标准';
       } else {
-        result.value = '优化扬程不满足GB3216标准';
+        result.value = '不满足GB3216标准';
       }
     } else {
-      result.value = '未选择规则';
+      result.value = '请选择评价规则';
     }
   } else if (selectedOption.value === '自定义') {
     if (customLowerLimit.value === '' && customUpperLimit.value === '') {
-      result.value = '请输入上下限';
+      result.value = '请输入扬程上下限';
       showModal.value = true;
       return;
     }
     if (customLowerLimit.value === '') {
-      result.value = '请输入下限';
+      result.value = '请输入扬程下限';
       showModal.value = true;
       return;
     }
     if (customUpperLimit.value === '') {
-      result.value = '请输入上限';
+      result.value = '请输入扬程上限';
       showModal.value = true;
       return;
     }
@@ -156,9 +160,9 @@ function checkValue() {
       return;
     }
     if (newH >= customLowerLimit.value && newH <= customUpperLimit.value) {
-      result.value = `优化扬程在自定义范围内`;
+      result.value = `在自定义范围内`;
     } else {
-      result.value = `优化扬程不在自定义范围内`;
+      result.value = `不在自定义范围内`;
     }
   }
   showModal.value = true;
@@ -188,6 +192,7 @@ function closeModal() {
 }
 
 .input-group-horizontal {
+  margin-bottom: 10px; /* 添加间距以便于视觉上的区分 */
   display: flex;
   align-items: center;
 }
@@ -197,18 +202,24 @@ function closeModal() {
 }
 
 .custom-input {
-  height: 20px;
-  width: 100px;
+  height: 25px;
+  width: 200px;
 }
 
 .selectbox {
-  height: 20px;
+  height: 30px;
   width: 200px;
 }
 
 .checkValue {
-  margin-left: 20px;
-  margin-top: 50px;
+  margin-top: 20px;
+  padding: 10px 20px;
+  border: none;
+  background-color: #007bff;
+  color: white;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
 }
 
 button {
@@ -228,6 +239,9 @@ button:hover {
 
 .result_msg {
   margin-top: 20px;
+  font-size: 18px;
+  color: #333;
+  font-weight: bold;
   white-space: pre-wrap; /* 保证换行符被正确显示 */
 }
 

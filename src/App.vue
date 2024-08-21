@@ -4,7 +4,7 @@
     <div class="content">
       <Tabs :selectedTabs="tabs" :selectedTab="selectedTab" @update:selectedTab="updateSelectedTab" />
       <div v-if="selectedTab === ''" class="placeholder">暂未选择评价模块</div>
-      <EvaluationPanel v-else :tabName="selectedTab" :filePath="filePath" />
+      <EvaluationPanel v-else :tabName="selectedTab" :filePath1="filePath1" :filePath2="filePath2" />
     </div>
   </div>
 </template>
@@ -15,15 +15,12 @@ import SideBar from './components/Sidebar.vue'
 import Tabs from './components/Tabs.vue'
 import EvaluationPanel from './views/EvaluationPanel.vue'
 
-// 初始化选项卡和选中的选项卡
+// 定义
 const tabs = ref([])
 const selectedTab = ref('')
-const filePath = ref('')
-// 动态引入 ipcRenderer
-let ipcRenderer
-if (window.require) {
-  ipcRenderer = window.require('electron').ipcRenderer
-}
+const filePath1 = ref('')
+const filePath2 = ref('')
+const { ipcRenderer } = require('electron');
 
 // 更新选项卡
 const updateSelectedTabs = (selectedItems) => {
@@ -47,17 +44,23 @@ const updateSelectedTab = (tab) => {
 
 // 监听文件路径参数
 onMounted(() => {
-  const urlParams = new URLSearchParams(window.location.search)
-  const filepath = urlParams.get('filepath')
-  console.log('File path from URL:', filepath)
-  filePath.value = filepath
+  // 从 URL 参数中获取文件路径1和文件路径2
+  const urlParams = new URLSearchParams(window.location.search);
+  const filepath1FromUrl = urlParams.get('filepath1');
+  const filepath2FromUrl = urlParams.get('filepath2');
+  console.log('File path 1 from URL:', filepath1FromUrl);
+  console.log('File path 2 from URL:', filepath2FromUrl);
+  filePath1.value = filepath1FromUrl;
+  filePath2.value = filepath2FromUrl;
 
-  if (ipcRenderer) {
-    ipcRenderer.on('file-path', (event, path) => {
-      console.log('Received file path from main process:', path)
-      filePath.value = path
-    })
-  }
+   // 监听主进程传来的文件路径
+  ipcRenderer.on('file-paths', (event, { filePath1: path1, filePath2: path2 }) => {
+    console.log('Received file path 1 from main process:', path1);
+    console.log('Received file path 2 from main process:', path2);
+    // 将文件路径更新到 Vue 的响应式变量中
+    filePath1.value = path1 || filePath1.value;
+    filePath2.value = path2 || filePath2.value;
+  });
 })
 </script>
 

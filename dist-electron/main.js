@@ -13,8 +13,26 @@ const createWindow = () => {
       contextIsolation: false
     }
   });
-  mainWindow.loadURL("http://localhost:3000");
+  let filePath1 = process.argv[1];
+  let filePath2 = process.argv[2];
+  if (filePath1 && fs.existsSync(filePath1)) {
+    console.log("Valid first file path.", filePath1);
+  } else {
+    console.error("Invalid or missing first file path.");
+    filePath1 = null;
+  }
+  if (filePath2 && fs.existsSync(filePath2)) {
+    console.log("Valid second file path:", filePath2);
+  } else {
+    console.error("Invalid or missing second file path.");
+    filePath2 = null;
+  }
+  mainWindow.loadFile("./dist/index.html");
   mainWindow.webContents.openDevTools();
+  mainWindow.webContents.once("did-finish-load", () => {
+    mainWindow.webContents.send("file-paths", { filePath1, filePath2 });
+    console.log("File paths sent to renderer:", filePath1, filePath2);
+  });
   mainWindow.on("closed", function() {
     mainWindow = null;
   });

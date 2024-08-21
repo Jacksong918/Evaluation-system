@@ -1,7 +1,12 @@
 <template>
   <div class="evaluation-panel">
     <div class="evaluation-details" v-if="tabDetailsComponent !== null">
-      <component :is="tabDetailsComponent" :filePath="filePath" class="full-height"></component>
+      <component 
+        :is="tabDetailsComponent" 
+        :filePath1="filePath1" 
+        :filePath2="filePath2" 
+        class="full-height">
+      </component>
     </div>
   </div>
 </template>
@@ -10,13 +15,17 @@
 import { shallowRef, watch, defineAsyncComponent } from 'vue';
 import { defineProps } from 'vue';
 
-// Define props
+// 定义
 const props = defineProps({
   tabName: {
     type: String,
     required: true
   },
-  filePath: {
+  filePath1: {
+    type: String,
+    required: false
+  },
+  filePath2: {
     type: String,
     required: false
   }

@@ -29,10 +29,10 @@ const emit = defineEmits(['item-selected']);
 const menuItems = [
   { name: '扬程评价', disabled: false, canSelect: true },
   { name: '效率和轴功率评价', disabled: false, canSelect: true },
-  { name: '压力脉动评价', disabled: false, canSelect: true },
+  { name: '压力脉动评价', disabled: false, canSelect: false },
   { name: '振动评价', disabled: false, canSelect: true },
-  { name: '噪声评价', disabled: false, canSelect: true },
-  { name: '综合评价', disabled: false, canSelect: true }
+  { name: '噪声评价', disabled: false, canSelect: false },
+  { name: '综合评价', disabled: false, canSelect: false }
 ];
 
 const selectedItems = ref([]);
