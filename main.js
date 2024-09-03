@@ -1,5 +1,4 @@
 const { app, BrowserWindow, ipcMain } = require('electron')
-const path = require('path');
 const fs = require('fs');
 
 // 屏蔽安全警告
@@ -33,7 +32,7 @@ const createWindow = () => {
         console.log('Valid second file path:', filePath2);
     } else {
         console.error('Invalid or missing second file path.');
-        filePath2 = null; // 设置为 null 以避免尝试加载不存在的文件
+        filePath2 = null; 
     }
 
 
@@ -42,11 +41,10 @@ const createWindow = () => {
     mainWindow.loadFile("./dist/index.html")  // 打包用
 
     // 打开开发者工具
-    mainWindow.webContents.openDevTools();
+    // mainWindow.webContents.openDevTools();
 
     // 确保页面已加载完成，然后发送文件路径
     mainWindow.webContents.once('did-finish-load', () => {
-        // 发送两个文件路径给渲染进程
         mainWindow.webContents.send('file-paths', { filePath1, filePath2 });
         console.log('File paths sent to renderer:', filePath1, filePath2);
     });

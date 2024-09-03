@@ -207,6 +207,7 @@ function closeModal() {
 }
 
 .checkValue {
+  width:104px;
   margin-top: 20px;
   padding: 10px 20px;
   border: none;

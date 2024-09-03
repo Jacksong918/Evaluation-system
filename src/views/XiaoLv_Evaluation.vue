@@ -31,7 +31,7 @@
       </div>
     </div>
 
-    <button class="checkValue" @click="checkValue">效率和轴功率评价</button>
+    <button class="checkValue1" @click="checkValue">效率和轴功率评价</button>
     <div class="result_msg" v-if="result !== null">{{ result }}</div>
   </div>
 </template>
@@ -168,5 +168,151 @@ function checkValue() {
   }
 }
 
-
 </script>
+
+
+<style>
+.evaluation-panel {
+  flex: 1;
+  padding: 10px;
+  background-color: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.evaluation-options {
+  display: flex;
+  align-items: center;
+}
+
+.evaluation-content {
+  margin-top: 10px;
+}
+
+.input-group-horizontal {
+  margin-bottom: 10px; /* 添加间距以便于视觉上的区分 */
+  display: flex;
+  align-items: center;
+}
+
+.input-group-horizontal label {
+  margin-right: 20px; /* 增加中间间距 */
+}
+
+.custom-input {
+  height: 25px;
+  width: 200px;
+}
+
+.selectbox {
+  height: 30px;
+  width: 200px;
+}
+
+.checkValue1 {
+  width:168px;;
+  margin-top: 20px;
+  padding: 10px 20px;
+  border: none;
+  background-color: #007bff;
+  color: white;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+button {
+  padding: 10px 20px;
+  border: none;
+  background-color: #007bff;
+  color: white;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  margin-top: 20px;
+}
+
+button:hover {
+  background-color: #0056b3;
+}
+
+.result_msg {
+  margin-top: 20px;
+  font-size: 18px;
+  color: #333;
+  font-weight: bold;
+  white-space: pre-wrap; /* 保证换行符被正确显示 */
+}
+
+/* 弹窗样式 */
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background-color: #ffffff;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  width: 80%;
+  max-width: 500px;
+  text-align: center;
+  position: relative;
+  animation: slide-down 0.4s ease-out;
+}
+
+.modal-content p {
+  margin: 20px 0;
+  font-size: 18px;
+}
+
+.modal-button {
+  padding: 10px 20px;
+  border: none;
+  background-color: #28a745;
+  color: white;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  display: inline-block;
+  margin-top: 20px;
+}
+
+.modal-button:hover {
+  background-color: #218838;
+}
+
+.close {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  font-size: 24px;
+  cursor: pointer;
+  color: #aaa;
+  transition: color 0.3s ease;
+}
+
+.close:hover {
+  color: #000;
+}
+
+@keyframes slide-down {
+  from {
+    transform: translateY(-50px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+</style>
