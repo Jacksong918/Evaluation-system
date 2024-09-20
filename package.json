@@ -29,7 +29,7 @@
   },
   "build": {
     "productName": "评价系统",
-    "appId": "electron.app",
+    "appId": "evaluation.app",
     "copyright": "Copyright 2023 dagongren",
     "directories": {
       "output": "release/"
